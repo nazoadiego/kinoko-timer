@@ -2,6 +2,7 @@ import { FC, useContext, useEffect, useRef, useState } from "react";
 import TimerContext from "../pages/TimerContext";
 import { prettyTime } from "../utils/prettyTime";
 import useTimer from "../utils/useTimer";
+import PurpleButton from "./Button";
 
 interface TimeboxProps {
 	id: number;
@@ -51,7 +52,12 @@ const Timebox: FC<TimeboxProps> = (props) => {
 				<span>{timeTotalDisplay}</span>
 				<h5>Id: {id}</h5>
 				<h5>active? {activeTimeboxId === id ? "Yes" : "No"}</h5>
-				<button onClick={switchToNext}>Next</button>
+				<div className="my-2 space-x-2">
+					<PurpleButton clickEvent={switchToNext}>Next</PurpleButton>
+					<PurpleButton clickEvent={() => setActiveTimeboxId(id)}>
+						Active
+					</PurpleButton>
+				</div>
 			</div>
 		</div>
 	);

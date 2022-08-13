@@ -1,7 +1,5 @@
 import { useRef, useState } from "react";
 
-// TODO If you click start two times it will go down faster
-// TODO Add dynamic initial timeSet
 const useTimer = (choosenTime: number) => {
 	const intervalRef = useRef<NodeJS.Timer | undefined>(undefined);
 	const [timeLeft, setTimeLeft] = useState(choosenTime);

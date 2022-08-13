@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
+import PurpleButton from "../components/Button";
 import Timebox from "../components/Timebox";
 import { prettyTime } from "../utils/prettyTime";
 import useTimer from "../utils/useTimer";
@@ -19,23 +20,21 @@ const Home: NextPage = () => {
 	const [activeTimeboxId, setActiveTimeboxId] = useState(0);
 	const [activeTask, setActiveTask] = useState(false);
 	const value = { activeTimeboxId, setActiveTimeboxId, activeTask };
-	const [choosenTime, setChoosenTime] = useState(60);
+	const [choosenTime, setChoosenTime] = useState(90);
 	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
 
 	const startTask = () => {
 		if (activeTimeboxId === 0) setActiveTimeboxId(1);
+
+		if (activeTask !== true) startTimer();
 		setActiveTask(true);
-		startTimer();
 	};
 
-	// TODO: when you restart, it starts from the top. Maybe use a different thing like a boolean to stop the timeboxes.
-	// ? Add this boolean to the context?
 	const stopTask = () => {
 		stopTimer();
 		setActiveTask(false);
 	};
 
-	// Get your two displays for timeTotal and timeLeft
 	const timeLeftDisplay = prettyTime(timeLeft);
 	const timeTotalDisplay = prettyTime(choosenTime);
 
@@ -56,24 +55,11 @@ const Home: NextPage = () => {
 						<span>/</span>
 						<span>{timeTotalDisplay}</span>
 					</h5>
-					<button
-						className="mt-10 px-4 py-2 bg-kinoko-purple text-white rounded-lg hover:translate-y-0.5 transition ease-in"
-						onClick={startTask}
-					>
-						Start Timer
-					</button>
-					<button
-						className="mt-10 px-4 py-2 bg-kinoko-purple text-white rounded-lg hover:translate-y-0.5 transition ease-in"
-						onClick={stopTask}
-					>
-						Stop Timer
-					</button>
-					<button
-						className="mt-10 px-4 py-2 bg-kinoko-purple text-white rounded-lg hover:translate-y-0.5 transition ease-in"
-						onClick={resetTimer}
-					>
-						Reset Timer
-					</button>
+					<div className="space-y-5 flex flex-col mt-10">
+						<PurpleButton clickEvent={startTask}>Start Timer</PurpleButton>
+						<PurpleButton clickEvent={stopTask}>Stop Timer</PurpleButton>
+						<PurpleButton clickEvent={resetTimer}>Reset Timer</PurpleButton>
+					</div>
 				</div>
 				<div className="space-y-3">
 					<h2 className="text-white text-6xl">Timers</h2>
