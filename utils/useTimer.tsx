@@ -1,12 +1,8 @@
-import { FC, useRef, useState } from "react";
-
-interface useTimerProps {
-	choosenTime: number;
-}
+import { useRef, useState } from "react";
 
 // TODO If you click start two times it will go down faster
 // TODO Add dynamic initial timeSet
-const useTimer: FC<useTimerProps> = (choosenTime) => {
+const useTimer = (choosenTime: number) => {
 	const intervalRef = useRef<NodeJS.Timer | undefined>(undefined);
 	const [timeLeft, setTimeLeft] = useState(choosenTime);
 
@@ -33,7 +29,7 @@ const useTimer: FC<useTimerProps> = (choosenTime) => {
 		setTimeLeft(60);
 	};
 
-	return [startTimer, stopTimer, resetTimer, timeLeft];
+	return { startTimer, stopTimer, resetTimer, timeLeft };
 };
 
 export default useTimer;

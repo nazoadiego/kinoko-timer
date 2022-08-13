@@ -10,7 +10,7 @@ const Timebox: FC<TimeboxProps> = (props) => {
 	const { id } = props;
 	const { activeTimeboxId, setActiveTimeboxId } = useContext(TimerContext);
 	const [choosenTime, setChoosenTime] = useState(59);
-	const [startTimer, stopTimer, resetTimer, timeLeft] = useTimer(choosenTime);
+	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
 
 	const switchToNext = () => {
 		if (activeTimeboxId === 3) {
@@ -21,16 +21,14 @@ const Timebox: FC<TimeboxProps> = (props) => {
 	};
 
 	// TODO: This could be improved to only run when timeLeft is 0 instead of checking every second
+	// TODO: reset timer when timebox reaches zero and goes to the next one
+
 	useEffect(() => {
 		if (timeLeft === 0) switchToNext();
 
 		return () => {};
 	}, [timeLeft]);
 
-	// TODO: reset timer when timebox reaches zero and goes to the next one
-	// TODO: Only start the timer if the task has been started. And make sure they start at sync.
-	// TODO: Find a way to import the code of our timer/callback (each timebox might need its own ref), so you can keep things a bit dry (useTimer Hook?)
-	// TODO: Change to the next timebox automatically
 	useEffect(() => {
 		if (activeTimeboxId === id) startTimer();
 

@@ -10,15 +10,14 @@ import TimerContext from "./TimerContext";
 // TODO: Set task time
 // TODO: Set timebox duration
 // TODO: add icons for edit and delete
-// TODO: edit and delete functionality
-// TODO: custom useTimer hook7
+// TODO: edit and delete forms and functionality
 // TODO: Cool framermotion animations
 
 const Home: NextPage = () => {
 	const [activeTimeboxId, setActiveTimeboxId] = useState(0);
 	const value = { activeTimeboxId, setActiveTimeboxId };
 	const [choosenTime, setChoosenTime] = useState(59);
-	const [startTimer, stopTimer, resetTimer, timeLeft] = useTimer(choosenTime);
+	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
 
 	const startTask = () => {
 		setActiveTimeboxId(1);
