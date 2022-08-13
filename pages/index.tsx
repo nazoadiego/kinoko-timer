@@ -1,7 +1,8 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Timebox from "../components/Timebox";
+import useTimer from "../utils/useTimer";
 import TimerContext from "./TimerContext";
 
 // TODO: Add custom audio for switches between timeboxes
@@ -14,34 +15,14 @@ import TimerContext from "./TimerContext";
 // TODO: Cool framermotion animations
 
 const Home: NextPage = () => {
-	const [activeTimeboxId, setActiveTimeboxId] = useState(1);
-	const [timeLeft, setTimeLeft] = useState(59);
+	const [activeTimeboxId, setActiveTimeboxId] = useState(0);
 	const value = { activeTimeboxId, setActiveTimeboxId };
+	const [choosenTime, setChoosenTime] = useState(59);
+	const [startTimer, stopTimer, resetTimer, timeLeft] = useTimer(choosenTime);
 
-	const intervalRef = useRef<NodeJS.Timer | null>(null);
-
-	const coundownCallback = () => {
-		setTimeLeft((prevTimeLeft) => {
-			if (prevTimeLeft > 1) return prevTimeLeft - 1;
-
-			clearInterval(intervalRef.current);
-			intervalRef.current = null;
-			return 0;
-		});
-	};
-
-	const startTimer = () => {
-		intervalRef.current = setInterval(coundownCallback, 1000);
-	};
-
-	// TODO: Stop all timeboxes when tasks reaches 0
-	const stopTimer = () => {
-		clearInterval(intervalRef.current);
-		intervalRef.current = null;
-	};
-
-	const resetTimer = () => {
-		setTimeLeft(60);
+	const startTask = () => {
+		setActiveTimeboxId(1);
+		startTimer();
 	};
 
 	return (
@@ -59,11 +40,11 @@ const Home: NextPage = () => {
 					<h5 className="texl-lg">
 						<span className="text-kinoko-purple">00:{timeLeft}</span>
 						<span>/</span>
-						<span>25:00</span>
+						<span>00:{choosenTime}</span>
 					</h5>
 					<button
 						className="mt-10 px-4 py-2 bg-kinoko-purple text-white rounded-lg hover:translate-y-0.5 transition ease-in"
-						onClick={startTimer}
+						onClick={startTask}
 					>
 						Start Timer
 					</button>
