@@ -21,7 +21,8 @@ const Timebox: FC<TimeboxProps> = (props) => {
 	};
 
 	// TODO: This could be improved to only run when timeLeft is 0 instead of checking every second
-	// TODO: reset timer when timebox reaches zero and goes to the next one
+	// TODO: reset timebox when timebox reaches zero and goes to the next one
+	// TODO: stop timebox when task button stop timer is pushed
 
 	useEffect(() => {
 		if (timeLeft === 0) switchToNext();

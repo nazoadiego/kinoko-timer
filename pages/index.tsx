@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import Timebox from "../components/Timebox";
 import useTimer from "../utils/useTimer";
 import TimerContext from "./TimerContext";
@@ -12,17 +12,27 @@ import TimerContext from "./TimerContext";
 // TODO: add icons for edit and delete
 // TODO: edit and delete forms and functionality
 // TODO: Cool framermotion animations
+// TODO: Change the variable name 'value' to something clearer. It's being used to be passed down to our context
 
 const Home: NextPage = () => {
 	const [activeTimeboxId, setActiveTimeboxId] = useState(0);
 	const value = { activeTimeboxId, setActiveTimeboxId };
-	const [choosenTime, setChoosenTime] = useState(59);
+	const [choosenTime, setChoosenTime] = useState(60);
 	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
 
 	const startTask = () => {
 		setActiveTimeboxId(1);
 		startTimer();
 	};
+
+	const formatTime = (number: number) => {
+		return number.toString().padStart(2, "0");
+	};
+
+	const minutes = formatTime(Math.floor(choosenTime / 60));
+	const seconds = formatTime(choosenTime - Number(minutes) * 60);
+	const minutesLeft = formatTime(Math.floor(timeLeft / 60));
+	const secondsLeft = formatTime(timeLeft - Number(minutesLeft) * 60);
 
 	return (
 		<div className="min-h-screen flex-col items-center justify-center bg-kinoko-black">
@@ -37,9 +47,13 @@ const Home: NextPage = () => {
 					<h3 className="text-3xl text-kinoko-purple">Reading Japanese</h3>
 					<h5 className="text-xl">Total duration</h5>
 					<h5 className="texl-lg">
-						<span className="text-kinoko-purple">00:{timeLeft}</span>
+						<span className="text-kinoko-purple">
+							{minutesLeft}:{secondsLeft}
+						</span>
 						<span>/</span>
-						<span>00:{choosenTime}</span>
+						<span>
+							{minutes}:{seconds}
+						</span>
 					</h5>
 					<button
 						className="mt-10 px-4 py-2 bg-kinoko-purple text-white rounded-lg hover:translate-y-0.5 transition ease-in"
