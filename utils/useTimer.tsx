@@ -26,7 +26,7 @@ const useTimer = (choosenTime: number) => {
 	};
 
 	const resetTimer = () => {
-		setTimeLeft(60);
+		setTimeLeft(choosenTime);
 	};
 
 	return { startTimer, stopTimer, resetTimer, timeLeft };

@@ -9,7 +9,7 @@ interface TimeboxProps {
 const Timebox: FC<TimeboxProps> = (props) => {
 	const { id } = props;
 	const { activeTimeboxId, setActiveTimeboxId } = useContext(TimerContext);
-	const [choosenTime, setChoosenTime] = useState(59);
+	const [choosenTime, setChoosenTime] = useState(10);
 	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
 
 	const switchToNext = () => {
@@ -18,10 +18,10 @@ const Timebox: FC<TimeboxProps> = (props) => {
 		} else {
 			setActiveTimeboxId((prevValue: number) => prevValue + 1);
 		}
+		resetTimer();
 	};
 
 	// TODO: This could be improved to only run when timeLeft is 0 instead of checking every second
-	// TODO: reset timebox when timebox reaches zero and goes to the next one
 	// TODO: stop timebox when task button stop timer is pushed
 
 	useEffect(() => {
