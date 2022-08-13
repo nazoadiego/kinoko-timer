@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
 import Timebox from "../components/Timebox";
+import { prettyTime } from "../utils/prettyTime";
 import useTimer from "../utils/useTimer";
 import TimerContext from "./TimerContext";
 
@@ -16,35 +17,27 @@ import TimerContext from "./TimerContext";
 
 const Home: NextPage = () => {
 	const [activeTimeboxId, setActiveTimeboxId] = useState(0);
-	const value = { activeTimeboxId, setActiveTimeboxId };
-	const [choosenTime, setChoosenTime] = useState(59);
+	const [activeTask, setActiveTask] = useState(false);
+	const value = { activeTimeboxId, setActiveTimeboxId, activeTask };
+	const [choosenTime, setChoosenTime] = useState(60);
 	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
 
 	const startTask = () => {
-		setActiveTimeboxId(1);
+		if (activeTimeboxId === 0) setActiveTimeboxId(1);
+		setActiveTask(true);
 		startTimer();
 	};
 
-	const formatTime = (number: number) => {
-		return number.toString().padStart(2, "0");
+	// TODO: when you restart, it starts from the top. Maybe use a different thing like a boolean to stop the timeboxes.
+	// ? Add this boolean to the context?
+	const stopTask = () => {
+		stopTimer();
+		setActiveTask(false);
 	};
 
-	// TODO: you learned a better way of calculate seconds in a codewards challenge. Something with a hash. Look for it. You could get rid of Number() call and the dependency between minutes and seconds.
-	// ? Make it a hash/map?
-	// ? Should this be a separate util? Note that you would have to pass state
-	// ? If you do separate it. Make it return a string with the formmated time?
-	const calculateMinutes = (seconds: number) => Math.floor(seconds / 60);
-	const calculateSeconds = (seconds: number, minutes: string) => {
-		return seconds - Number(minutes) * 60;
-	};
-
-	// Total duration
-	const minutes = formatTime(calculateMinutes(choosenTime));
-	const seconds = formatTime(calculateSeconds(choosenTime, minutes));
-
-	// Duration
-	const minutesLeft = formatTime(calculateMinutes(timeLeft));
-	const secondsLeft = formatTime(calculateSeconds(timeLeft, minutesLeft));
+	// Get your two displays for timeTotal and timeLeft
+	const timeLeftDisplay = prettyTime(timeLeft);
+	const timeTotalDisplay = prettyTime(choosenTime);
 
 	return (
 		<div className="min-h-screen flex-col items-center justify-center bg-kinoko-black">
@@ -59,13 +52,9 @@ const Home: NextPage = () => {
 					<h3 className="text-3xl text-kinoko-purple">Reading Japanese</h3>
 					<h5 className="text-xl">Total duration</h5>
 					<h5 className="texl-lg">
-						<span className="text-kinoko-purple">
-							{minutesLeft}:{secondsLeft}
-						</span>
+						<span className="text-kinoko-purple">{timeLeftDisplay}</span>
 						<span>/</span>
-						<span>
-							{minutes}:{seconds}
-						</span>
+						<span>{timeTotalDisplay}</span>
 					</h5>
 					<button
 						className="mt-10 px-4 py-2 bg-kinoko-purple text-white rounded-lg hover:translate-y-0.5 transition ease-in"
@@ -75,7 +64,7 @@ const Home: NextPage = () => {
 					</button>
 					<button
 						className="mt-10 px-4 py-2 bg-kinoko-purple text-white rounded-lg hover:translate-y-0.5 transition ease-in"
-						onClick={stopTimer}
+						onClick={stopTask}
 					>
 						Stop Timer
 					</button>
