@@ -8,14 +8,13 @@ import useTimer from "../utils/useTimer";
 import TimerContext from "./TimerContext";
 
 // TODO: Add custom audio for switches between timeboxes
+// TODO: purple outline for active timebox
 // TODO: Settings for notifications etc
-// TODO: Set task time
-// TODO: Set timebox duration
 // TODO: add icons for edit and delete
 // TODO: edit and delete forms and functionality
 // TODO: Cool framermotion animations
-// TODO: Change the variable name 'value' to something clearer. It's being used to be passed down to our context
 // TODO: Don't allow less than 2 timeboxes
+// TODO: Add default sizes for headers and clean up your css
 
 const Home: NextPage = () => {
 	const [activeTimeboxId, setActiveTimeboxId] = useState(0);
@@ -23,7 +22,14 @@ const Home: NextPage = () => {
 	const [choosenTime, setChoosenTime] = useState(30);
 	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
 	const timeboxes = [1, 2, 3];
-	const value = { activeTimeboxId, setActiveTimeboxId, activeTask, timeboxes };
+	let lastTimeboxId = timeboxes.slice(-1)[0];
+
+	const value = {
+		activeTimeboxId,
+		setActiveTimeboxId,
+		activeTask,
+		lastTimeboxId,
+	};
 
 	const startTask = () => {
 		if (activeTimeboxId === 0) setActiveTimeboxId(1);
@@ -35,6 +41,10 @@ const Home: NextPage = () => {
 	const stopTask = () => {
 		stopTimer();
 		setActiveTask(false);
+	};
+
+	const addTimebox = () => {
+		timeboxes.push(lastTimeboxId + 1);
 	};
 
 	const timeLeftDisplay = prettyTime(timeLeft);
@@ -61,6 +71,10 @@ const Home: NextPage = () => {
 						<PurpleButton clickEvent={startTask}>Start Timer</PurpleButton>
 						<PurpleButton clickEvent={stopTask}>Stop Timer</PurpleButton>
 						<PurpleButton clickEvent={resetTimer}>Reset Timer</PurpleButton>
+					</div>
+					<div className="mt-6">
+						<h5>last timebox Id: {lastTimeboxId}</h5>
+						<h5>active?: {activeTask ? "Yes" : "No"}</h5>
 					</div>
 				</div>
 				<div className="space-y-3">
