@@ -10,14 +10,15 @@ interface TimeboxProps {
 
 const Timebox: FC<TimeboxProps> = (props) => {
 	const { id } = props;
-	const { activeTimeboxId, setActiveTimeboxId, activeTask } =
+	const { activeTimeboxId, setActiveTimeboxId, activeTask, timeboxes } =
 		useContext(TimerContext);
 	const [choosenTime, setChoosenTime] = useState(10);
 	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
+	let lastTimeboxId = timeboxes.slice(-1)[0];
 
 	const switchToNext = () => {
 		// TODO: this is dependant on there being 3 timeboxes. It should be the last timebox. Not third one.
-		if (activeTimeboxId === 3) {
+		if (activeTimeboxId === lastTimeboxId) {
 			setActiveTimeboxId(1);
 		} else {
 			setActiveTimeboxId((prevValue: number) => prevValue + 1);
@@ -57,6 +58,7 @@ const Timebox: FC<TimeboxProps> = (props) => {
 					<PurpleButton clickEvent={() => setActiveTimeboxId(id)}>
 						Active
 					</PurpleButton>
+					<PurpleButton clickEvent={resetTimer}>Reset Timer</PurpleButton>
 				</div>
 			</div>
 		</div>

@@ -15,13 +15,15 @@ import TimerContext from "./TimerContext";
 // TODO: edit and delete forms and functionality
 // TODO: Cool framermotion animations
 // TODO: Change the variable name 'value' to something clearer. It's being used to be passed down to our context
+// TODO: Don't allow less than 2 timeboxes
 
 const Home: NextPage = () => {
 	const [activeTimeboxId, setActiveTimeboxId] = useState(0);
 	const [activeTask, setActiveTask] = useState(false);
-	const value = { activeTimeboxId, setActiveTimeboxId, activeTask };
-	const [choosenTime, setChoosenTime] = useState(90);
+	const [choosenTime, setChoosenTime] = useState(30);
 	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
+	const timeboxes = [1, 2, 3];
+	const value = { activeTimeboxId, setActiveTimeboxId, activeTask, timeboxes };
 
 	const startTask = () => {
 		if (activeTimeboxId === 0) setActiveTimeboxId(1);
@@ -64,9 +66,9 @@ const Home: NextPage = () => {
 				<div className="space-y-3">
 					<h2 className="text-white text-6xl">Timers</h2>
 					<TimerContext.Provider value={value}>
-						<Timebox id={1} />
-						<Timebox id={2} />
-						<Timebox id={3} />
+						{timeboxes.map((id) => (
+							<Timebox id={id} />
+						))}
 					</TimerContext.Provider>
 				</div>
 			</main>
