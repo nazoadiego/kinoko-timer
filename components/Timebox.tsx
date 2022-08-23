@@ -2,7 +2,7 @@ import { FC, useContext, useEffect, useRef, useState } from "react";
 import TimerContext from "../pages/TimerContext";
 import { prettyTime } from "../utils/prettyTime";
 import useTimer from "../utils/useTimer";
-import PurpleButton from "./Button";
+import PurpleButton from "./PurpleButton";
 
 interface TimeboxProps {
 	id: number;
@@ -44,7 +44,7 @@ const Timebox: FC<TimeboxProps> = (props) => {
 	const timeTotalDisplay = prettyTime(choosenTime);
 
 	return (
-		<div className="bg-white px-6 py-2 rounded-lg">
+		<div className="white-card px-6 py-2">
 			<h3 className="text-black ">Timebox</h3>
 			<div className="justify-end">
 				<span className="text-kinoko-purple">{timeLeftDisplay}</span>

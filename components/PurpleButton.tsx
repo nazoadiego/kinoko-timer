@@ -8,10 +8,7 @@ interface PurpleButtonProps {
 const PurpleButton: FC<PurpleButtonProps> = (props) => {
 	const { clickEvent, children } = props;
 	return (
-		<button
-			className="px-4 py-2 bg-kinoko-purple text-white rounded-lg hover:translate-y-0.5 transition ease-in"
-			onClick={clickEvent}
-		>
+		<button className="purple-btn" onClick={clickEvent}>
 			{children}
 		</button>
 	);

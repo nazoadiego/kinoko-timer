@@ -1,7 +1,13 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useState } from "react";
-import PurpleButton from "../components/Button";
+import {
+	ChangeEventHandler,
+	EventHandler,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
+import PurpleButton from "../components/PurpleButton";
 import Timebox from "../components/Timebox";
 import { prettyTime } from "../utils/prettyTime";
 import useTimer from "../utils/useTimer";
@@ -50,6 +56,35 @@ const Home: NextPage = () => {
 	const timeLeftDisplay = prettyTime(timeLeft);
 	const timeTotalDisplay = prettyTime(choosenTime);
 
+	const [audio, setAudio] = useState<null | HTMLAudioElement>(null);
+
+	useEffect(() => {
+		setAudio(new Audio());
+	}, []);
+
+	const playAudio = () => {
+		if (audio == null) return;
+
+		audio.play();
+	};
+
+	useEffect(() => {
+		playAudio();
+	}, [activeTimeboxId]);
+
+	const handleChangeFile = (e) => {
+		const reader = new FileReader();
+		const file = e.target.files[0];
+
+		reader.onload = (e) => {
+			if (e.target == null) return;
+
+			setAudio(new Audio(e.target.result));
+		};
+
+		reader.readAsDataURL(file);
+	};
+
 	return (
 		<div className="min-h-screen flex-col items-center justify-center bg-kinoko-black">
 			<Head>
@@ -58,11 +93,11 @@ const Home: NextPage = () => {
 			</Head>
 
 			<main className="grid grid-cols-2 gap-2">
-				<div className="bg-white rounded-lg flex flex-col items-center justify-center">
-					<h2 className="text-4xl">Task</h2>
-					<h3 className="text-3xl text-kinoko-purple">Reading Japanese</h3>
-					<h5 className="text-xl">Total duration</h5>
-					<h5 className="texl-lg">
+				<div className="white-card flex flex-col items-center justify-center">
+					<h2>Task</h2>
+					<h3 className="text-kinoko-purple">Reading Japanese</h3>
+					<h5>Total duration</h5>
+					<h5>
 						<span className="text-kinoko-purple">{timeLeftDisplay}</span>
 						<span>/</span>
 						<span>{timeTotalDisplay}</span>
@@ -81,9 +116,13 @@ const Home: NextPage = () => {
 					<h2 className="text-white text-6xl">Timers</h2>
 					<TimerContext.Provider value={value}>
 						{timeboxes.map((id) => (
-							<Timebox id={id} />
+							<Timebox id={id} key={id} />
 						))}
 					</TimerContext.Provider>
+				</div>
+				<div className="white-card">
+					<input type="file" onChange={(e) => handleChangeFile(e)} />
+					<PurpleButton clickEvent={playAudio}>Play Audio</PurpleButton>
 				</div>
 			</main>
 		</div>
