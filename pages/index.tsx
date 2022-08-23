@@ -1,20 +1,12 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import {
-	ChangeEvent,
-	ChangeEventHandler,
-	EventHandler,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import PurpleButton from "../components/PurpleButton";
 import Timebox from "../components/Timebox";
 import { prettyTime } from "../utils/prettyTime";
 import useTimer from "../utils/useTimer";
 import TimerContext from "./TimerContext";
 
-// TODO: purple outline for active timebox
 // TODO: Settings for notifications etc
 // TODO: add icons for edit and delete
 // TODO: edit and delete forms and functionality
@@ -28,7 +20,9 @@ const Home: NextPage = () => {
 	const [choosenTime, setChoosenTime] = useState(30);
 	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
 	const timeboxes = [1, 2, 3];
-	let lastTimeboxId = timeboxes.slice(-1)[0];
+	let lastTimeboxId = timeboxes.slice(-1)[0]; // ! Doesn't work properly, fix and make changes in Timebox.tsx
+
+	// Context
 
 	const value = {
 		activeTimeboxId,
@@ -36,6 +30,8 @@ const Home: NextPage = () => {
 		activeTask,
 		lastTimeboxId,
 	};
+
+	// Task Timer
 
 	const startTask = () => {
 		if (activeTimeboxId === 0) setActiveTimeboxId(1);
@@ -55,6 +51,8 @@ const Home: NextPage = () => {
 
 	const timeLeftDisplay = prettyTime(timeLeft);
 	const timeTotalDisplay = prettyTime(choosenTime);
+
+	// Audio
 
 	const [audio, setAudio] = useState<null | HTMLAudioElement>(null);
 
