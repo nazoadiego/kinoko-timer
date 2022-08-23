@@ -15,6 +15,8 @@ const Timebox: FC<TimeboxProps> = (props) => {
 	const [choosenTime, setChoosenTime] = useState(10);
 	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
 
+	const activeTimebox = activeTimeboxId === id;
+
 	const switchToNext = () => {
 		// TODO: this is dependant on there being 3 timeboxes. It should be the last timebox. Not third one.
 		if (activeTimeboxId === lastTimeboxId) {
@@ -33,7 +35,7 @@ const Timebox: FC<TimeboxProps> = (props) => {
 	}, [timeLeft]);
 
 	useEffect(() => {
-		if (activeTimeboxId === id) startTimer();
+		if (activeTimebox) startTimer();
 		if (activeTask === false) stopTimer();
 		return () => {
 			stopTimer();
@@ -43,15 +45,21 @@ const Timebox: FC<TimeboxProps> = (props) => {
 	const timeLeftDisplay = prettyTime(timeLeft);
 	const timeTotalDisplay = prettyTime(choosenTime);
 
+	const activeTimeboxClass = activeTimebox
+		? "outline outline-offset-1 outline-kinoko-purple transition -translate-y-0.5"
+		: "";
+
 	return (
-		<div className="white-card px-6 py-2">
-			<h3 className="text-black ">Timebox</h3>
+		<div
+			className={`white-card px-6 py-2  transition ease-in-out duration-300 ${activeTimeboxClass}`}
+		>
+			<h3>Timebox</h3>
 			<div className="justify-end">
 				<span className="text-kinoko-purple">{timeLeftDisplay}</span>
 				<span>/</span>
 				<span>{timeTotalDisplay}</span>
 				<h5>Id: {id}</h5>
-				<h5>active? {activeTimeboxId === id ? "Yes" : "No"}</h5>
+				<h5>active? {activeTimebox ? "Yes" : "No"}</h5>
 				<div className="my-2 space-x-2">
 					<PurpleButton clickEvent={switchToNext}>Next</PurpleButton>
 					<PurpleButton clickEvent={() => setActiveTimeboxId(id)}>
