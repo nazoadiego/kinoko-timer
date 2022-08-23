@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import {
+	ChangeEvent,
 	ChangeEventHandler,
 	EventHandler,
 	useEffect,
@@ -13,7 +14,6 @@ import { prettyTime } from "../utils/prettyTime";
 import useTimer from "../utils/useTimer";
 import TimerContext from "./TimerContext";
 
-// TODO: Add custom audio for switches between timeboxes
 // TODO: purple outline for active timebox
 // TODO: Settings for notifications etc
 // TODO: add icons for edit and delete
@@ -72,14 +72,16 @@ const Home: NextPage = () => {
 		playAudio();
 	}, [activeTimeboxId]);
 
-	const handleChangeFile = (e) => {
+	const handleChangeFile = (e: ChangeEvent<HTMLInputElement>) => {
+		if (e.target.files == null) return;
+
 		const reader = new FileReader();
 		const file = e.target.files[0];
 
 		reader.onload = (e) => {
 			if (e.target == null) return;
 
-			setAudio(new Audio(e.target.result));
+			setAudio(new Audio(e.target.result as string));
 		};
 
 		reader.readAsDataURL(file);
@@ -94,6 +96,7 @@ const Home: NextPage = () => {
 
 			<main className="grid grid-cols-2 gap-2">
 				<div className="white-card flex flex-col items-center justify-center">
+					{/* Task */}
 					<h2>Task</h2>
 					<h3 className="text-kinoko-purple">Reading Japanese</h3>
 					<h5>Total duration</h5>
@@ -112,6 +115,7 @@ const Home: NextPage = () => {
 						<h5>active?: {activeTask ? "Yes" : "No"}</h5>
 					</div>
 				</div>
+				{/* Timeboxes */}
 				<div className="space-y-3">
 					<h2 className="text-white text-6xl">Timers</h2>
 					<TimerContext.Provider value={value}>
@@ -120,6 +124,7 @@ const Home: NextPage = () => {
 						))}
 					</TimerContext.Provider>
 				</div>
+				{/* Audio */}
 				<div className="white-card">
 					<input type="file" onChange={(e) => handleChangeFile(e)} />
 					<PurpleButton clickEvent={playAudio}>Play Audio</PurpleButton>
