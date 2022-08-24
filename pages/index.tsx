@@ -19,8 +19,24 @@ const Home: NextPage = () => {
 	const [activeTask, setActiveTask] = useState(false);
 	const [choosenTime, setChoosenTime] = useState(30);
 	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
-	const timeboxes = [1, 2, 3];
-	let lastTimeboxId = timeboxes.slice(-1)[0]; // ! Doesn't work properly, fix and make changes in Timebox.tsx
+	const [timeboxes, setTimeboxes] = useState([1, 2, 3]); // ? Can we get away with timeboxes just being numbers?
+
+	// Delete Timebox
+	const deleteTimebox = (timeboxIndex: number) => {
+		const filteredTimeboxes = timeboxes.filter((timebox) => {
+			return timebox !== timeboxIndex;
+		});
+
+		setTimeboxes(filteredTimeboxes);
+	};
+
+	// Add Timebox
+	// ? It should be added to the end always
+	// ? Do I want to add the timebox with an id that increases
+	// ? or just keep it from 1 to 3
+	// const addTimebox = () => {
+	// 	timeboxes.push(id);
+	// };
 
 	// Context
 
@@ -28,7 +44,6 @@ const Home: NextPage = () => {
 		activeTimeboxId,
 		setActiveTimeboxId,
 		activeTask,
-		lastTimeboxId,
 	};
 
 	// Task Timer
@@ -43,10 +58,6 @@ const Home: NextPage = () => {
 	const stopTask = () => {
 		stopTimer();
 		setActiveTask(false);
-	};
-
-	const addTimebox = () => {
-		timeboxes.push(lastTimeboxId + 1);
 	};
 
 	const timeLeftDisplay = prettyTime(timeLeft);
@@ -109,16 +120,21 @@ const Home: NextPage = () => {
 						<PurpleButton clickEvent={resetTimer}>Reset Timer</PurpleButton>
 					</div>
 					<div className="mt-6">
-						<h5>last timebox Id: {lastTimeboxId}</h5>
+						<h5>timeboxes size: {timeboxes.length}</h5>
 						<h5>active?: {activeTask ? "Yes" : "No"}</h5>
 					</div>
 				</div>
 				{/* Timeboxes */}
 				<div className="space-y-3">
-					<h2 className="text-white text-6xl">Timers</h2>
+					<h2 className="text-white">Timeboxes</h2>
 					<TimerContext.Provider value={value}>
 						{timeboxes.map((id) => (
-							<Timebox id={id} key={id} />
+							<Timebox
+								id={id}
+								key={id}
+								deleteTimebox={deleteTimebox}
+								timeboxes={timeboxes}
+							/>
 						))}
 					</TimerContext.Provider>
 				</div>

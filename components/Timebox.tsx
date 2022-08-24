@@ -6,10 +6,12 @@ import PurpleButton from "./PurpleButton";
 
 interface TimeboxProps {
 	id: number;
+	deleteTimebox: (timeboxIndex: number) => void;
+	timeboxes: number[];
 }
 
 const Timebox: FC<TimeboxProps> = (props) => {
-	const { id } = props;
+	const { id, deleteTimebox, timeboxes } = props;
 	const { activeTimeboxId, setActiveTimeboxId, activeTask, lastTimeboxId } =
 		useContext(TimerContext);
 	const [choosenTime, setChoosenTime] = useState(10);
@@ -18,12 +20,12 @@ const Timebox: FC<TimeboxProps> = (props) => {
 	const activeTimebox = activeTimeboxId === id;
 
 	const switchToNext = () => {
-		// TODO: this is dependant on there being 3 timeboxes. It should be the last timebox. Not third one.
-		if (activeTimeboxId === lastTimeboxId) {
+		if (activeTimeboxId === timeboxes.length) {
 			setActiveTimeboxId(1);
 		} else {
 			setActiveTimeboxId((prevValue: number) => prevValue + 1);
 		}
+
 		resetTimer();
 	};
 
@@ -45,13 +47,15 @@ const Timebox: FC<TimeboxProps> = (props) => {
 	const timeLeftDisplay = prettyTime(timeLeft);
 	const timeTotalDisplay = prettyTime(choosenTime);
 
+	// CSS
+
 	const activeTimeboxClass = activeTimebox
 		? "outline outline-offset-1 outline-kinoko-purple transition -translate-y-0.5"
 		: "";
 
 	return (
 		<div
-			className={`white-card px-6 py-2  transition ease-in-out duration-300 ${activeTimeboxClass}`}
+			className={`white-card px-6 py-2 transition ease-in-out duration-300 ${activeTimeboxClass}`}
 		>
 			<h3>Timebox</h3>
 			<div className="justify-end">
@@ -60,12 +64,15 @@ const Timebox: FC<TimeboxProps> = (props) => {
 				<span>{timeTotalDisplay}</span>
 				<h5>Id: {id}</h5>
 				<h5>active? {activeTimebox ? "Yes" : "No"}</h5>
-				<div className="my-2 space-x-2">
+				<div className="my-2 space-x-2 space-y-2">
 					<PurpleButton clickEvent={switchToNext}>Next</PurpleButton>
 					<PurpleButton clickEvent={() => setActiveTimeboxId(id)}>
 						Active
 					</PurpleButton>
 					<PurpleButton clickEvent={resetTimer}>Reset Timer</PurpleButton>
+					<PurpleButton clickEvent={() => deleteTimebox(id)}>
+						Delete
+					</PurpleButton>
 				</div>
 			</div>
 		</div>
