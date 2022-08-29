@@ -1,19 +1,16 @@
 export const prettyTime = (timeInSeconds: number) => {
 	const formatTime = (number: number) => number.toString().padStart(2, "0");
 
-	// TODO: Add the calculation for hours. Probably a good idea to look into the next todo ->
-	// TODO: you learned a better way of calculate seconds in a codewars challenge. Something with a hash. Look for it. You could get rid of Number() call and the dependency between minutes and seconds.
-	// ? Make a hash/map for seconds minutes?
-	// ? Should this be a separate util? Note that you would have to pass state
-	// ? If you do separate it. Make it return a string with the formmated time?
+	// ? add a default 0 to the map instead of the as number
+	const timeMap = new Map([
+		["hours", ~~(timeInSeconds / 3600)],
+		["minutes", ~~((timeInSeconds % 3600) / 60)],
+		["seconds", ~~timeInSeconds % 60],
+	]);
 
-	const calculateMinutes = (seconds: number) => Math.floor(seconds / 60);
-	const calculateSeconds = (seconds: number, minutes: number) => {
-		return seconds - minutes * 60;
-	};
+	const hours = timeMap.get("hours") as number;
+	const minutes = timeMap.get("minutes") as number;
+	const seconds = timeMap.get("seconds") as number;
 
-	const minutes = calculateMinutes(timeInSeconds);
-	const seconds = calculateSeconds(timeInSeconds, minutes);
-
-	return `${formatTime(minutes)}:${formatTime(seconds)}`;
+	return `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
 };

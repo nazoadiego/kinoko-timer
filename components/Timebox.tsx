@@ -12,7 +12,7 @@ interface TimeboxProps {
 
 const Timebox: FC<TimeboxProps> = (props) => {
 	const { id, deleteTimebox, timeboxes } = props;
-	const { activeTimeboxId, setActiveTimeboxId, activeTask, lastTimeboxId } =
+	const { activeTimeboxId, setActiveTimeboxId, activeTask } =
 		useContext(TimerContext);
 	const [choosenTime, setChoosenTime] = useState(10);
 	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
@@ -39,6 +39,7 @@ const Timebox: FC<TimeboxProps> = (props) => {
 	useEffect(() => {
 		if (activeTimebox) startTimer();
 		if (activeTask === false) stopTimer();
+
 		return () => {
 			stopTimer();
 		};
