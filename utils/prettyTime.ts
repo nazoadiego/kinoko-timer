@@ -1,18 +1,29 @@
+// ? Pretty time gets called like 8 times on first render (when there are 4 timers)
+
 export const prettyTime = (timeInSeconds: number) => {
 	const formatTime = (number: number) => number.toString().padStart(2, "0");
 
-	const timeMap = new Map([
-		["hours", ~~(timeInSeconds / 3600)],
-		["minutes", ~~((timeInSeconds % 3600) / 60)],
-		["seconds", ~~timeInSeconds % 60],
-	]);
+	const oneMinute = 60;
+	const oneHour = oneMinute * 60;
+	const oneDay = oneHour * 24;
 
-	const [hours, minutes, seconds] = [
-		timeMap.get("hours") || 0,
-		timeMap.get("minutes") || 0,
-		timeMap.get("second") || 0,
-	];
+	const calculateTime = (timeInSeconds: number) => {
+		return [
+			~~((timeInSeconds % oneDay) / oneHour), // hours
+			~~((timeInSeconds % oneHour) / oneMinute), // minutes
+			~~timeInSeconds % oneMinute, // seconds
+		];
+	};
 
-	// ? Only return hours if it exist, otherwise return minutes and seconds because it looks cleaner
-	return `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+	const [hours, minutes, seconds] = calculateTime(timeInSeconds);
+
+	let timeUnits = [hours, minutes, seconds];
+
+	if (hours === 0) {
+		timeUnits = [minutes, seconds];
+	}
+
+	const formattedTimeUnits = timeUnits.map((timeUnit) => formatTime(timeUnit));
+
+	return formattedTimeUnits.join(":");
 };
