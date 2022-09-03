@@ -1,18 +1,12 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import {
-	ChangeEvent,
-	Dispatch,
-	SetStateAction,
-	useEffect,
-	useState,
-} from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import PurpleButton from "../components/PurpleButton";
+import TaskTitle from "../components/TaskTitle";
 import Timebox from "../components/Timebox";
 import { prettyTime } from "../utils/prettyTime";
 import useTimer from "../utils/useTimer";
 import TimerContext from "./TimerContext";
-import { FiEdit } from "react-icons/fi";
 
 const Home: NextPage = () => {
 	const [activeTimeboxId, setActiveTimeboxId] = useState(0);
@@ -20,20 +14,6 @@ const Home: NextPage = () => {
 	const [choosenTime, setChoosenTime] = useState(30);
 	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
 	const [timeboxes, setTimeboxes] = useState([1, 2, 3]); // ? Can we get away with timeboxes just being numbers?
-	const [editTaskTitle, setEditTaskTitle] = useState(false);
-	const [taskTitle, setTaskTitle] = useState("Reading Japanese");
-
-	// Handle Save Changes
-
-	// On Enter save and hide the form
-	const handleSaveChanges = (
-		e: KeyboardEvent,
-		displayEdit: Dispatch<SetStateAction<boolean>>
-	) => {
-		if (e.key === "Enter") {
-			displayEdit(false);
-		}
-	};
 
 	// Delete Timebox
 	const deleteTimebox = (timeboxIndex: number) => {
@@ -120,29 +100,7 @@ const Home: NextPage = () => {
 
 			<main className="grid grid-cols-2 gap-2">
 				<div className="white-card flex flex-col items-center justify-center">
-					{/* Task */}
-					{/* Task Title */}
-					{editTaskTitle ? (
-						<input
-							type="text"
-							autoFocus
-							placeholder="Task Title"
-							value={taskTitle}
-							onChange={(e) => setTaskTitle(e.target.value)}
-							onKeyPress={(e) => handleSaveChanges(e, setEditTaskTitle)}
-						/>
-					) : (
-						<>
-							<div className="flex items-center gap-2">
-								<h2>Task</h2>
-								<FiEdit
-									className="cursor-pointer"
-									onClick={() => setEditTaskTitle(true)}
-								/>
-							</div>
-							<h3 className="text-kinoko-purple">{taskTitle}</h3>
-						</>
-					)}
+					<TaskTitle />
 					<h5>Total duration</h5>
 					<h5>
 						<span className="text-kinoko-purple">{timeLeftDisplay}</span>
