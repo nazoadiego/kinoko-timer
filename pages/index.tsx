@@ -1,43 +1,18 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { ChangeEvent, useEffect, useState } from "react";
+import {
+	ChangeEvent,
+	Dispatch,
+	SetStateAction,
+	useEffect,
+	useState,
+} from "react";
 import PurpleButton from "../components/PurpleButton";
 import Timebox from "../components/Timebox";
 import { prettyTime } from "../utils/prettyTime";
 import useTimer from "../utils/useTimer";
 import TimerContext from "./TimerContext";
-
-// TODO: Settings for notifications etc
-// TODO: add icons for edit and delete
-// TODO: edit functionality
-// TODO: edit forms and functionality
-// TODO: Cool framermotion animations (might not need it for now)
-// TODO: add timebox hollow card
-// TODO: add functionality for timeboxes
-// TODO: Add default sizes for headers and clean up your css
-// TODO: Should allow 1, 2, or 3 timeboxes
-// TODO: Validations for user input (always numbers, positive numbers)
-// TODO: Add title for task
-// TODO: Add title for timebox
-// ? Need to think what behavior do I want when editing task/timebox
-// TODO: When editing task, timer stops
-// TODO: When editing timebox, timer stops
-// TODO: Add Kinoko trademark orb
-// TODO: Add category tags
-// TODO: Mobile Design and Responsiveness
-// TODO: Add tests before big components refactors
-// TODO: Refactor and separate into: Task, Timeboxes, (Audio, Setting) components
-// TODO: Pagination (per task), keep the settings shared for both
-// TODO: Create new page (task) functionality
-// TODO: Delete new page (task) functionality
-// TODO: Add mute notification setting
-// TODO: Add Test Audio (you already have play audio)
-// TODO: Add repeat setting
-// TODO: Style the file uploader properly
-// TODO: Style the settings component
-// TODO: Handle cases for hours
-// ? Improvement Should allow as many timeboxes as you want
-// ? Improvement Should allow no timeboxes (only task timer)
+import { FiEdit } from "react-icons/fi";
 
 const Home: NextPage = () => {
 	const [activeTimeboxId, setActiveTimeboxId] = useState(0);
@@ -45,6 +20,20 @@ const Home: NextPage = () => {
 	const [choosenTime, setChoosenTime] = useState(30);
 	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
 	const [timeboxes, setTimeboxes] = useState([1, 2, 3]); // ? Can we get away with timeboxes just being numbers?
+	const [editTaskTitle, setEditTaskTitle] = useState(false);
+	const [taskTitle, setTaskTitle] = useState("Reading Japanese");
+
+	// Handle Save Changes
+
+	// On Enter save and hide the form
+	const handleSaveChanges = (
+		e: KeyboardEvent,
+		displayEdit: Dispatch<SetStateAction<boolean>>
+	) => {
+		if (e.key === "Enter") {
+			displayEdit(false);
+		}
+	};
 
 	// Delete Timebox
 	const deleteTimebox = (timeboxIndex: number) => {
@@ -132,8 +121,28 @@ const Home: NextPage = () => {
 			<main className="grid grid-cols-2 gap-2">
 				<div className="white-card flex flex-col items-center justify-center">
 					{/* Task */}
-					<h2>Task</h2>
-					<h3 className="text-kinoko-purple">Reading Japanese</h3>
+					{/* Task Title */}
+					{editTaskTitle ? (
+						<input
+							type="text"
+							autoFocus
+							placeholder="Task Title"
+							value={taskTitle}
+							onChange={(e) => setTaskTitle(e.target.value)}
+							onKeyPress={(e) => handleSaveChanges(e, setEditTaskTitle)}
+						/>
+					) : (
+						<>
+							<div className="flex items-center gap-2">
+								<h2>Task</h2>
+								<FiEdit
+									className="cursor-pointer"
+									onClick={() => setEditTaskTitle(true)}
+								/>
+							</div>
+							<h3 className="text-kinoko-purple">{taskTitle}</h3>
+						</>
+					)}
 					<h5>Total duration</h5>
 					<h5>
 						<span className="text-kinoko-purple">{timeLeftDisplay}</span>

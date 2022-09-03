@@ -1,7 +1,9 @@
 // ? Pretty time gets called like 8 times on first render (when there are 4 timers)
 
 export const prettyTime = (timeInSeconds: number) => {
-	const formatTime = (number: number) => number.toString().padStart(2, "0");
+	const formatTime = (quantity: number, timeUnit: string) => {
+		return quantity.toString().padStart(2, "0") + timeUnit;
+	};
 
 	const oneMinute = 60;
 	const oneHour = oneMinute * 60;
@@ -9,9 +11,9 @@ export const prettyTime = (timeInSeconds: number) => {
 
 	const calculateTime = (timeInSeconds: number) => {
 		return [
-			~~((timeInSeconds % oneDay) / oneHour), // hours
-			~~((timeInSeconds % oneHour) / oneMinute), // minutes
-			~~timeInSeconds % oneMinute, // seconds
+			{ type: "h", quantity: ~~((timeInSeconds % oneDay) / oneHour) },
+			{ type: "m", quantity: ~~((timeInSeconds % oneHour) / oneMinute) },
+			{ type: "s", quantity: ~~timeInSeconds % oneMinute },
 		];
 	};
 
@@ -19,11 +21,14 @@ export const prettyTime = (timeInSeconds: number) => {
 
 	let timeUnits = [hours, minutes, seconds];
 
-	if (hours === 0) {
+	const hideHours = hours.quantity === 0; // ? Make hiding hours a setting?
+	if (hideHours) {
 		timeUnits = [minutes, seconds];
 	}
 
-	const formattedTimeUnits = timeUnits.map((timeUnit) => formatTime(timeUnit));
+	const formattedTimeUnits = timeUnits.map((timeUnit) => {
+		return formatTime(timeUnit.quantity, timeUnit.type);
+	});
 
-	return formattedTimeUnits.join(":");
+	return formattedTimeUnits.join(" ");
 };
