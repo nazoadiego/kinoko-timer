@@ -1,7 +1,7 @@
-import { FC, useContext, useEffect, useRef, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import TimerContext from "../pages/TimerContext";
 import { prettyTime } from "../utils/prettyTime";
-import useTimer from "../utils/useTimer";
+import useTimer from "../utils/hooks/useTimer";
 import PurpleButton from "./PurpleButton";
 
 interface TimeboxProps {
@@ -25,6 +25,8 @@ const Timebox: FC<TimeboxProps> = (props) => {
 	const { activeTimeboxId, setActiveTimeboxId, activeTask } =
 		useContext(TimerContext);
 	const [choosenTime, setChoosenTime] = useState(5);
+
+	// ? if we change choosen time, we should adapt timeLeft as well
 	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
 
 	const activeTimebox = activeTimeboxId === id;
@@ -72,7 +74,7 @@ const Timebox: FC<TimeboxProps> = (props) => {
 		<div
 			className={`white-card px-6 py-2 transition ease-in-out duration-300 ${activeTimeboxClass}`}
 		>
-			<h3>Timebox</h3>
+			<TimeboxTitle />
 			<div className="justify-end">
 				<span className="text-kinoko-purple">{timeLeftDisplay}</span>
 				<span>/</span>
@@ -92,6 +94,54 @@ const Timebox: FC<TimeboxProps> = (props) => {
 			</div>
 		</div>
 	);
+};
+
+import { Dispatch, SetStateAction } from "react";
+import { FiEdit } from "react-icons/fi";
+
+interface TaskTitleProps {}
+
+const TimeboxTitle: FC = () => {
+	const [editTimeboxTitle, setEditTimeboxTitle] = useState(false);
+	const [timeboxTitle, setTimeboxTitle] = useState("Timebox Title");
+
+	// Handle Save Changes
+
+	// On Enter save and hide the form
+	const handleSaveChanges = (
+		e: KeyboardEvent,
+		displayEdit: Dispatch<SetStateAction<boolean>>
+	) => {
+		if (e.key === "Enter") {
+			displayEdit(false);
+		}
+	};
+
+	if (editTimeboxTitle) {
+		return (
+			<input
+				type="text"
+				autoFocus
+				placeholder="Timebox Title"
+				value={timeboxTitle}
+				// We are triggering twice here? change and keypress
+				onChange={(e) => setTimeboxTitle(e.target.value)}
+				onKeyPress={(e) => handleSaveChanges(e, setEditTimeboxTitle)}
+			/>
+		);
+	} else {
+		return (
+			<>
+				<div className="flex items-center gap-2">
+					<h3 className="text-kinoko-purple">{timeboxTitle}</h3>
+					<FiEdit
+						className="cursor-pointer"
+						onClick={() => setEditTimeboxTitle(true)}
+					/>
+				</div>
+			</>
+		);
+	}
 };
 
 export default Timebox;
