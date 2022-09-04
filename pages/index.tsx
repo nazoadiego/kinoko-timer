@@ -9,14 +9,34 @@ import useTimer from "../utils/useTimer";
 import TimerContext from "./TimerContext";
 
 const Home: NextPage = () => {
-	const [activeTimeboxId, setActiveTimeboxId] = useState(0);
+	// Task
 	const [activeTask, setActiveTask] = useState(false);
+
+	// Timer
 	const [choosenTime, setChoosenTime] = useState(30);
 	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
-	const [timeboxes, setTimeboxes] = useState([1, 2, 3]); // ? Can we get away with timeboxes just being numbers?
+
+	// Timeboxes
+	const [activeTimeboxId, setActiveTimeboxId] = useState(0);
+	const [timeboxes, setTimeboxes] = useState([1, 2, 3]);
+	const lastTimeboxUUID = timeboxes.slice(-1)[0];
+	const firstTimeboxUUID = timeboxes[0];
+	const currentTimeboxIndex = timeboxes.findIndex(
+		(timebox) => timebox === activeTimeboxId
+	);
 
 	// Delete Timebox
+	// ? We need to use the timeboxIndex. Definitely rethink how we are dealing with timeboxes and ids
 	const deleteTimebox = (timeboxIndex: number) => {
+		// 	if (timeboxes.length === 1) return;
+		// 	let filteredTimeboxes: number[] = [];
+		// 	if (timeboxes.length === 2) {
+		// 		filteredTimeboxes = [1];
+		// 	}
+		// 	if (timeboxes.length === 3) {
+		// 		filteredTimeboxes = [1, 2];
+		// 	}
+		// 	setTimeboxes(filteredTimeboxes);
 		const filteredTimeboxes = timeboxes.filter((timebox) => {
 			return timebox !== timeboxIndex;
 		});
@@ -25,13 +45,11 @@ const Home: NextPage = () => {
 	};
 
 	// Add Timebox
-	// ? It should be added to the end always
-	// ? Do I want to add the timebox with an id that increases
-	// ? or just keep it from 1 to 3
-	// ? Only show add timebox hollow card if timeboxes.length less than 3
-	// const addTimebox = () => {
-	// 	timeboxes.push(id);
-	// };
+	const addTimebox = () => {
+		if (timeboxes.length === 3) return;
+
+		setTimeboxes([...timeboxes, timeboxes.slice(-1)[0] + 1]);
+	};
 
 	// Context
 
@@ -111,10 +129,13 @@ const Home: NextPage = () => {
 						<PurpleButton clickEvent={startTask}>Start Timer</PurpleButton>
 						<PurpleButton clickEvent={stopTask}>Stop Timer</PurpleButton>
 						<PurpleButton clickEvent={resetTimer}>Reset Timer</PurpleButton>
+						<PurpleButton clickEvent={addTimebox}>Add Timebox</PurpleButton>
 					</div>
 					<div className="mt-6">
 						<h5>timeboxes size: {timeboxes.length}</h5>
 						<h5>active?: {activeTask ? "Yes" : "No"}</h5>
+						<h5>activeTimeboxId?: {activeTimeboxId}</h5>
+						<h5>currentTimeboxIndex: {currentTimeboxIndex}</h5>
 					</div>
 				</div>
 				{/* Timeboxes */}
@@ -125,6 +146,9 @@ const Home: NextPage = () => {
 							<Timebox
 								id={id}
 								key={id}
+								lastTimeboxUUID={lastTimeboxUUID}
+								firstTimeboxUUID={firstTimeboxUUID}
+								currentTimeboxIndex={currentTimeboxIndex}
 								deleteTimebox={deleteTimebox}
 								timeboxes={timeboxes}
 							/>

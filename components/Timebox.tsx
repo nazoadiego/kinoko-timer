@@ -8,22 +8,34 @@ interface TimeboxProps {
 	id: number;
 	deleteTimebox: (timeboxIndex: number) => void;
 	timeboxes: number[];
+	lastTimeboxUUID: number;
+	firstTimeboxUUID: number;
+	currentTimeboxIndex: number;
 }
 
 const Timebox: FC<TimeboxProps> = (props) => {
-	const { id, deleteTimebox, timeboxes } = props;
+	const {
+		id,
+		deleteTimebox,
+		timeboxes,
+		lastTimeboxUUID,
+		firstTimeboxUUID,
+		currentTimeboxIndex,
+	} = props;
 	const { activeTimeboxId, setActiveTimeboxId, activeTask } =
 		useContext(TimerContext);
-	const [choosenTime, setChoosenTime] = useState(10);
+	const [choosenTime, setChoosenTime] = useState(5);
 	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
 
 	const activeTimebox = activeTimeboxId === id;
 
+	// Next Timebox
+
 	const switchToNext = () => {
-		if (activeTimeboxId === timeboxes.length) {
-			setActiveTimeboxId(1);
+		if (activeTimeboxId === lastTimeboxUUID) {
+			setActiveTimeboxId(firstTimeboxUUID);
 		} else {
-			setActiveTimeboxId((prevValue: number) => prevValue + 1);
+			setActiveTimeboxId(timeboxes[currentTimeboxIndex + 1]);
 		}
 
 		resetTimer();
@@ -44,6 +56,8 @@ const Timebox: FC<TimeboxProps> = (props) => {
 			stopTimer();
 		};
 	}, [activeTimeboxId, activeTask]);
+
+	// Time Display
 
 	const timeLeftDisplay = prettyTime(timeLeft);
 	const timeTotalDisplay = prettyTime(choosenTime);
