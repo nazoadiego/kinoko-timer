@@ -210,7 +210,6 @@ const TaskDuration: FC<TaskDurationProps> = (props) => {
 			<form onSubmit={(e) => handleSubmit(e)}>
 				<input
 					type="number"
-					autoFocus
 					placeholder="Hours"
 					value={hours}
 					onChange={(e) => handleUserInput(Number(e.target.value), setHours)}
@@ -224,7 +223,6 @@ const TaskDuration: FC<TaskDurationProps> = (props) => {
 				/>
 				<input
 					type="number"
-					autoFocus
 					placeholder="Seconds"
 					value={seconds}
 					onChange={(e) => handleUserInput(Number(e.target.value), setSeconds)}
