@@ -1,7 +1,7 @@
 import { FC, MouseEventHandler } from "react";
 
 interface PurpleButtonProps {
-	clickEvent: MouseEventHandler;
+	clickEvent?: MouseEventHandler;
 	children: string;
 }
 

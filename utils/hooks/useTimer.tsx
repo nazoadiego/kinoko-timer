@@ -1,8 +1,8 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const useTimer = (choosenTime: number) => {
+const useTimer = (taskDuration: number) => {
 	const intervalRef = useRef<NodeJS.Timer | undefined>(undefined);
-	const [timeLeft, setTimeLeft] = useState(choosenTime);
+	const [timeLeft, setTimeLeft] = useState(taskDuration);
 
 	const coundownCallback = () => {
 		setTimeLeft((prevTimeLeft) => {
@@ -24,10 +24,16 @@ const useTimer = (choosenTime: number) => {
 	};
 
 	const resetTimer = () => {
-		setTimeLeft(choosenTime);
+		setTimeLeft(taskDuration);
 	};
 
-	return { startTimer, stopTimer, resetTimer, timeLeft };
+	useEffect(() => {
+		if (timeLeft > taskDuration) {
+			resetTimer();
+		}
+	}, [taskDuration]);
+
+	return { startTimer, stopTimer, resetTimer, timeLeft, setTimeLeft };
 };
 
 export default useTimer;

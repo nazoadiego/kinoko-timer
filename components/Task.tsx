@@ -1,10 +1,18 @@
-import { useEffect, useState, Dispatch, FC, SetStateAction } from "react";
+import {
+	useEffect,
+	useState,
+	Dispatch,
+	FC,
+	SetStateAction,
+	FormEvent,
+} from "react";
 import PurpleButton from "../components/PurpleButton";
 import Timebox from "../components/Timebox";
 import { prettyTime } from "../utils/prettyTime";
 import useTimer from "../utils/hooks/useTimer";
 import TimerContext from "../pages/TimerContext";
 import { FiEdit } from "react-icons/fi";
+import { calculateTime } from "../utils/calculateTime";
 
 interface TaskProps {
 	playAudio: () => void;
@@ -13,10 +21,11 @@ interface TaskProps {
 const Task: FC<TaskProps> = ({ playAudio }) => {
 	// Task
 	const [activeTask, setActiveTask] = useState(false);
+	const [taskDuration, setTaskDuration] = useState(30);
 
 	// Timer
-	const [choosenTime, setChoosenTime] = useState(30);
-	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
+	const { startTimer, stopTimer, resetTimer, timeLeft } =
+		useTimer(taskDuration);
 
 	// Timeboxes
 	const [activeTimeboxId, setActiveTimeboxId] = useState(0);
@@ -68,19 +77,15 @@ const Task: FC<TaskProps> = ({ playAudio }) => {
 		playAudio();
 	}, [activeTimeboxId]);
 
-	const timeLeftDisplay = prettyTime(timeLeft);
-	const timeTotalDisplay = prettyTime(choosenTime);
-
 	return (
 		<main className="grid grid-cols-2 gap-2">
 			<div className="white-card flex flex-col items-center justify-center">
 				<TaskTitle />
-				<h5>Total duration</h5>
-				<h5>
-					<span className="text-kinoko-purple">{timeLeftDisplay}</span>
-					<span>/</span>
-					<span>{timeTotalDisplay}</span>
-				</h5>
+				<TaskDuration
+					timeLeft={timeLeft}
+					taskDuration={taskDuration}
+					setTaskDuration={setTaskDuration}
+				/>
 				<div className="space-y-5 flex flex-col mt-10">
 					<PurpleButton clickEvent={startTask}>Start Timer</PurpleButton>
 					<PurpleButton clickEvent={stopTask}>Stop Timer</PurpleButton>
@@ -156,6 +161,87 @@ const TaskTitle: FC<TaskTitleProps> = () => {
 						onClick={() => setEditTaskTitle(true)}
 					/>
 				</div>
+			</>
+		);
+	}
+};
+
+interface TaskDurationProps {
+	timeLeft: number;
+	taskDuration: number;
+	setTaskDuration: Dispatch<SetStateAction<number>>;
+}
+
+const TaskDuration: FC<TaskDurationProps> = (props) => {
+	const [editTaskDuration, setEditTaskDuration] = useState(false);
+	const { timeLeft, taskDuration, setTaskDuration } = props;
+	const [hours, setHours] = useState(0);
+	const [minutes, setMinutes] = useState(0);
+	const [seconds, setSeconds] = useState(0);
+
+	useEffect(() => {
+		const [hours, minutes, seconds] = calculateTime(taskDuration);
+		setHours(hours.quantity);
+		setMinutes(minutes.quantity);
+		setSeconds(seconds.quantity);
+	}, []);
+
+	// Handle Save Changes
+	const handleSubmit = (e: FormEvent) => {
+		e.preventDefault();
+		const newTaskDuration = hours * 3600 + minutes * 60 + seconds;
+		setTaskDuration(newTaskDuration);
+		setEditTaskDuration(false);
+	};
+
+	const handleUserInput = (
+		newValue: number,
+		setState: Dispatch<SetStateAction<number>>
+	) => {
+		setState(newValue);
+	};
+
+	// Display
+	const timeLeftDisplay = prettyTime(timeLeft);
+	const timeTotalDisplay = prettyTime(taskDuration);
+
+	if (editTaskDuration) {
+		return (
+			<form onSubmit={(e) => handleSubmit(e)}>
+				<input
+					type="number"
+					autoFocus
+					placeholder="Hours"
+					value={hours}
+					onChange={(e) => handleUserInput(Number(e.target.value), setHours)}
+				/>
+				<input
+					type="number"
+					autoFocus
+					placeholder="Minutes"
+					value={minutes}
+					onChange={(e) => handleUserInput(Number(e.target.value), setMinutes)}
+				/>
+				<input
+					type="number"
+					autoFocus
+					placeholder="Seconds"
+					value={seconds}
+					onChange={(e) => handleUserInput(Number(e.target.value), setSeconds)}
+				/>
+				<PurpleButton>Save</PurpleButton>
+			</form>
+		);
+	} else {
+		return (
+			<>
+				<span className="text-kinoko-purple">{timeLeftDisplay}</span>
+				<span>/</span>
+				<span>{timeTotalDisplay}</span>
+				<FiEdit
+					className="cursor-pointer"
+					onClick={() => setEditTaskDuration(true)}
+				/>
 			</>
 		);
 	}
