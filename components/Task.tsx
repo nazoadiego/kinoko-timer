@@ -21,11 +21,11 @@ interface TaskProps {
 const Task: FC<TaskProps> = ({ playAudio }) => {
 	// Task
 	const [activeTask, setActiveTask] = useState(false);
-	const [taskDuration, setTaskDuration] = useState(30);
+	const [durationInSeconds, setDurationInSeconds] = useState(30);
 
 	// Timer
 	const { startTimer, stopTimer, resetTimer, timeLeft } =
-		useTimer(taskDuration);
+		useTimer(durationInSeconds);
 
 	// Timeboxes
 	const [activeTimeboxId, setActiveTimeboxId] = useState(0);
@@ -83,8 +83,8 @@ const Task: FC<TaskProps> = ({ playAudio }) => {
 				<TaskTitle />
 				<TaskDuration
 					timeLeft={timeLeft}
-					taskDuration={taskDuration}
-					setTaskDuration={setTaskDuration}
+					durationInSeconds={durationInSeconds}
+					setDurationInSeconds={setDurationInSeconds}
 				/>
 				<div className="space-y-5 flex flex-col mt-10">
 					<PurpleButton clickEvent={startTask}>Start Timer</PurpleButton>
@@ -168,42 +168,31 @@ const TaskTitle: FC<TaskTitleProps> = () => {
 
 interface TaskDurationProps {
 	timeLeft: number;
-	taskDuration: number;
-	setTaskDuration: Dispatch<SetStateAction<number>>;
+	durationInSeconds: number;
+	setDurationInSeconds: Dispatch<SetStateAction<number>>;
 }
 
 const TaskDuration: FC<TaskDurationProps> = (props) => {
 	const [editTaskDuration, setEditTaskDuration] = useState(false);
-	const { timeLeft, taskDuration, setTaskDuration } = props;
-	const [hours, setHours] = useState(0);
-	const [minutes, setMinutes] = useState(0);
-	const [seconds, setSeconds] = useState(0);
-
-	useEffect(() => {
-		const [hours, minutes, seconds] = calculateTime(taskDuration);
-		setHours(hours.quantity);
-		setMinutes(minutes.quantity);
-		setSeconds(seconds.quantity);
-	}, []);
+	const { timeLeft, durationInSeconds, setDurationInSeconds } = props;
+	const [taskDuration, setTaskDuration] = useState(
+		calculateTime(durationInSeconds)
+	);
 
 	// Handle Save Changes
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
-		const newTaskDuration = hours * 3600 + minutes * 60 + seconds;
-		setTaskDuration(newTaskDuration);
+		const seconds =
+			taskDuration.hours.quantity * 3600 +
+			taskDuration.minutes.quantity * 60 +
+			taskDuration.seconds.quantity;
+		setDurationInSeconds(seconds);
 		setEditTaskDuration(false);
-	};
-
-	const handleUserInput = (
-		newValue: number,
-		setState: Dispatch<SetStateAction<number>>
-	) => {
-		setState(newValue);
 	};
 
 	// Display
 	const timeLeftDisplay = prettyTime(timeLeft);
-	const timeTotalDisplay = prettyTime(taskDuration);
+	const timeTotalDisplay = prettyTime(durationInSeconds);
 
 	if (editTaskDuration) {
 		return (
@@ -211,21 +200,45 @@ const TaskDuration: FC<TaskDurationProps> = (props) => {
 				<input
 					type="number"
 					placeholder="Hours"
-					value={hours}
-					onChange={(e) => handleUserInput(Number(e.target.value), setHours)}
+					value={taskDuration.hours.quantity}
+					onChange={(e) =>
+						setTaskDuration({
+							...taskDuration,
+							hours: {
+								...taskDuration.hours,
+								quantity: Number(e.target.value),
+							},
+						})
+					}
 				/>
 				<input
 					type="number"
 					autoFocus
 					placeholder="Minutes"
-					value={minutes}
-					onChange={(e) => handleUserInput(Number(e.target.value), setMinutes)}
+					value={taskDuration.minutes.quantity}
+					onChange={(e) =>
+						setTaskDuration({
+							...taskDuration,
+							minutes: {
+								...taskDuration.minutes,
+								quantity: Number(e.target.value),
+							},
+						})
+					}
 				/>
 				<input
 					type="number"
 					placeholder="Seconds"
-					value={seconds}
-					onChange={(e) => handleUserInput(Number(e.target.value), setSeconds)}
+					value={taskDuration.seconds.quantity}
+					onChange={(e) =>
+						setTaskDuration({
+							...taskDuration,
+							seconds: {
+								...taskDuration.seconds,
+								quantity: Number(e.target.value),
+							},
+						})
+					}
 				/>
 				<PurpleButton>Save</PurpleButton>
 			</form>

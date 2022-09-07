@@ -7,7 +7,7 @@ export const prettyTime = (timeInSeconds: number) => {
 		return quantity.toString().padStart(2, "0") + timeUnit;
 	};
 
-	const [hours, minutes, seconds] = calculateTime(timeInSeconds);
+	const { hours, minutes, seconds } = calculateTime(timeInSeconds);
 
 	let timeUnits = [hours, minutes, seconds];
 

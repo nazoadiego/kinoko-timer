@@ -3,9 +3,12 @@ const oneHour = oneMinute * 60;
 const oneDay = oneHour * 24;
 
 export const calculateTime = (timeInSeconds: number) => {
-	return [
-		{ type: "h", quantity: ~~((timeInSeconds % oneDay) / oneHour) },
-		{ type: "m", quantity: ~~((timeInSeconds % oneHour) / oneMinute) },
-		{ type: "s", quantity: ~~timeInSeconds % oneMinute },
-	];
+	return {
+		hours: { type: "h", quantity: ~~((timeInSeconds % oneDay) / oneHour) },
+		minutes: {
+			type: "m",
+			quantity: ~~((timeInSeconds % oneHour) / oneMinute),
+		},
+		seconds: { type: "s", quantity: ~~timeInSeconds % oneMinute },
+	};
 };
