@@ -4,11 +4,8 @@ const oneDay = oneHour * 24;
 
 export const calculateTime = (timeInSeconds: number) => {
 	return {
-		hours: { type: "h", quantity: ~~((timeInSeconds % oneDay) / oneHour) },
-		minutes: {
-			type: "m",
-			quantity: ~~((timeInSeconds % oneHour) / oneMinute),
-		},
-		seconds: { type: "s", quantity: ~~timeInSeconds % oneMinute },
+		hours: ~~((timeInSeconds % oneDay) / oneHour),
+		minutes: ~~((timeInSeconds % oneHour) / oneMinute),
+		seconds: ~~timeInSeconds % oneMinute,
 	};
 };

@@ -183,9 +183,9 @@ const TaskDuration: FC<TaskDurationProps> = (props) => {
 	const handleSubmit = (e: FormEvent) => {
 		e.preventDefault();
 		const seconds =
-			taskDuration.hours.quantity * 3600 +
-			taskDuration.minutes.quantity * 60 +
-			taskDuration.seconds.quantity;
+			taskDuration.hours * 3600 +
+			taskDuration.minutes * 60 +
+			taskDuration.seconds;
 		setDurationInSeconds(seconds);
 		setEditTaskDuration(false);
 	};
@@ -200,43 +200,31 @@ const TaskDuration: FC<TaskDurationProps> = (props) => {
 				<input
 					type="number"
 					placeholder="Hours"
-					value={taskDuration.hours.quantity}
+					value={taskDuration.hours}
 					onChange={(e) =>
-						setTaskDuration({
-							...taskDuration,
-							hours: {
-								...taskDuration.hours,
-								quantity: Number(e.target.value),
-							},
-						})
+						setTaskDuration({ ...taskDuration, hours: Number(e.target.value) })
 					}
 				/>
 				<input
 					type="number"
 					autoFocus
 					placeholder="Minutes"
-					value={taskDuration.minutes.quantity}
+					value={taskDuration.minutes}
 					onChange={(e) =>
 						setTaskDuration({
 							...taskDuration,
-							minutes: {
-								...taskDuration.minutes,
-								quantity: Number(e.target.value),
-							},
+							minutes: Number(e.target.value),
 						})
 					}
 				/>
 				<input
 					type="number"
 					placeholder="Seconds"
-					value={taskDuration.seconds.quantity}
+					value={taskDuration.seconds}
 					onChange={(e) =>
 						setTaskDuration({
 							...taskDuration,
-							seconds: {
-								...taskDuration.seconds,
-								quantity: Number(e.target.value),
-							},
+							seconds: Number(e.target.value),
 						})
 					}
 				/>

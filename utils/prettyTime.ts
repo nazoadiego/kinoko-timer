@@ -2,22 +2,28 @@
 
 import { calculateTime } from "./calculateTime";
 
+type TimeUnit = { quantity: number; type: string };
+
 export const prettyTime = (timeInSeconds: number) => {
-	const formatTime = (quantity: number, timeUnit: string) => {
-		return quantity.toString().padStart(2, "0") + timeUnit;
+	const formatTime = (timeUnit: TimeUnit) => {
+		return timeUnit.quantity.toString().padStart(2, "0") + timeUnit.type;
 	};
 
 	const { hours, minutes, seconds } = calculateTime(timeInSeconds);
 
-	let timeUnits = [hours, minutes, seconds];
+	let timeUnits: TimeUnit[] = [
+		{ quantity: hours, type: "h" },
+		{ quantity: minutes, type: "m" },
+		{ quantity: seconds, type: "s" },
+	];
 
-	const hideHours = hours.quantity === 0; // ? Make hiding hours a setting?
+	const hideHours = hours === 0; // ? Make hiding hours a setting?
 	if (hideHours) {
-		timeUnits = [minutes, seconds];
+		timeUnits = timeUnits.slice(1);
 	}
 
 	const formattedTimeUnits = timeUnits.map((timeUnit) => {
-		return formatTime(timeUnit.quantity, timeUnit.type);
+		return formatTime(timeUnit);
 	});
 
 	return formattedTimeUnits.join(" ");
