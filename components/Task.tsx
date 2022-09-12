@@ -121,29 +121,22 @@ const TaskTitle: FC<TaskTitleProps> = () => {
 	const [editTaskTitle, setEditTaskTitle] = useState(false);
 	const [taskTitle, setTaskTitle] = useState("Reading Japanese");
 
-	// Handle Save Changes
-
-	// On Enter save and hide the form
-	const handleSaveChanges = (
-		e: KeyboardEvent,
-		displayEdit: Dispatch<SetStateAction<boolean>>
-	) => {
-		if (e.key === "Enter") {
-			displayEdit(false);
-		}
+	const handleSubmit = (e: FormEvent) => {
+		e.preventDefault();
+		setEditTaskTitle(false);
 	};
 
 	if (editTaskTitle) {
 		return (
-			<input
-				type="text"
-				autoFocus
-				placeholder="Task Title"
-				value={taskTitle}
-				// We are triggering twice here? change and keypress
-				onChange={(e) => setTaskTitle(e.target.value)}
-				onKeyPress={(e) => handleSaveChanges(e, setEditTaskTitle)}
-			/>
+			<form onSubmit={(e) => handleSubmit(e)}>
+				<input
+					type="text"
+					autoFocus
+					placeholder="Task Title"
+					value={taskTitle}
+					onChange={(e) => setTaskTitle(e.target.value)}
+				/>
+			</form>
 		);
 	} else {
 		return (

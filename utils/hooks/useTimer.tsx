@@ -29,10 +29,12 @@ const useTimer = (taskDuration: number) => {
 		setTimeLeft(taskDuration);
 	};
 
+	// ? Up to preference, always update time left when choosing your time or not
 	useEffect(() => {
-		if (timeLeft > taskDuration) {
-			resetTimer();
-		}
+		// if (timeLeft > taskDuration) {
+		// 	resetTimer();
+		// }
+		resetTimer();
 	}, [taskDuration]);
 
 	return { startTimer, stopTimer, resetTimer, timeLeft, setTimeLeft };

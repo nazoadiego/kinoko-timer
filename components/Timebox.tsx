@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, FormEvent, useEffect, useState } from "react";
 import { prettyTime } from "../utils/prettyTime";
 import useTimer from "../utils/hooks/useTimer";
 import PurpleButton from "./PurpleButton";
@@ -27,10 +27,10 @@ const Timebox: FC<TimeboxProps> = (props) => {
 		setActiveTimeboxId,
 		activeTask,
 	} = props;
-	const [choosenTime, setChoosenTime] = useState(5);
+	const [durationInSeconds, setDurationInSeconds] = useState(5);
 
-	// ? if we change choosen time, we should adapt timeLeft as well
-	const { startTimer, stopTimer, resetTimer, timeLeft } = useTimer(choosenTime);
+	const { startTimer, stopTimer, resetTimer, timeLeft } =
+		useTimer(durationInSeconds);
 
 	const activeTimebox = activeTimeboxId === id;
 
@@ -69,11 +69,6 @@ const Timebox: FC<TimeboxProps> = (props) => {
 		};
 	}, [activeTimeboxId, activeTask]);
 
-	// Time Display
-
-	const timeLeftDisplay = prettyTime(timeLeft);
-	const timeTotalDisplay = prettyTime(choosenTime);
-
 	// Delete Timebox
 	const deleteTimebox = (deletedTimeboxUUID: number) => {
 		const filteredTimeboxes = timeboxes.filter((timeboxUUID) => {
@@ -103,9 +98,11 @@ const Timebox: FC<TimeboxProps> = (props) => {
 		>
 			<TimeboxTitle />
 			<div className="justify-end">
-				<span className="text-kinoko-purple">{timeLeftDisplay}</span>
-				<span>/</span>
-				<span>{timeTotalDisplay}</span>
+				<TimeboxDuration
+					timeLeft={timeLeft}
+					durationInSeconds={durationInSeconds}
+					setDurationInSeconds={setDurationInSeconds}
+				/>
 				<h5>Id: {id}</h5>
 				<h5>active? {activeTimebox ? "Yes" : "No"}</h5>
 				<div className="my-2 space-x-2 space-y-2">
@@ -125,36 +122,31 @@ const Timebox: FC<TimeboxProps> = (props) => {
 
 import { Dispatch, SetStateAction } from "react";
 import { FiEdit } from "react-icons/fi";
+import { calculateTime } from "../utils/calculateTime";
 
-interface TaskTitleProps {}
+interface TimeboxTitleProps {}
 
-const TimeboxTitle: FC = () => {
+const TimeboxTitle: FC<TimeboxTitleProps> = () => {
 	const [editTimeboxTitle, setEditTimeboxTitle] = useState(false);
 	const [timeboxTitle, setTimeboxTitle] = useState("Timebox Title");
 
-	// Handle Save Changes
-
-	// On Enter save and hide the form
-	const handleSaveChanges = (
-		e: KeyboardEvent,
-		displayEdit: Dispatch<SetStateAction<boolean>>
-	) => {
-		if (e.key === "Enter") {
-			displayEdit(false);
-		}
+	const handleSubmit = (e: FormEvent) => {
+		const target = e.target as HTMLTextAreaElement;
+		e.preventDefault();
+		setEditTimeboxTitle(false);
 	};
 
 	if (editTimeboxTitle) {
 		return (
-			<input
-				type="text"
-				autoFocus
-				placeholder="Timebox Title"
-				value={timeboxTitle}
-				// We are triggering twice here? change and keypress
-				onChange={(e) => setTimeboxTitle(e.target.value)}
-				onKeyPress={(e) => handleSaveChanges(e, setEditTimeboxTitle)}
-			/>
+			<form onSubmit={(e) => handleSubmit(e)}>
+				<input
+					type="text"
+					autoFocus
+					placeholder="Timebox Title"
+					value={timeboxTitle}
+					onChange={(e) => setTimeboxTitle(e.target.value)}
+				/>
+			</form>
 		);
 	}
 
@@ -167,6 +159,86 @@ const TimeboxTitle: FC = () => {
 					onClick={() => setEditTimeboxTitle(true)}
 				/>
 			</div>
+		</>
+	);
+};
+
+interface TimeboxDurationProps {
+	timeLeft: number;
+	durationInSeconds: number;
+	setDurationInSeconds: Dispatch<SetStateAction<number>>;
+}
+
+const TimeboxDuration: FC<TimeboxDurationProps> = (props) => {
+	const [editTaskDuration, setEditTaskDuration] = useState(false);
+	const { timeLeft, durationInSeconds, setDurationInSeconds } = props;
+	const [taskDuration, setTaskDuration] = useState(
+		calculateTime(durationInSeconds)
+	);
+
+	// Handle Save Changes
+	const handleSubmit = (e: FormEvent) => {
+		e.preventDefault();
+		const seconds =
+			taskDuration.hours * 3600 +
+			taskDuration.minutes * 60 +
+			taskDuration.seconds;
+		setDurationInSeconds(seconds);
+		setEditTaskDuration(false);
+	};
+
+	// Display
+	const timeLeftDisplay = prettyTime(timeLeft);
+	const timeTotalDisplay = prettyTime(durationInSeconds);
+
+	if (editTaskDuration) {
+		return (
+			<form onSubmit={(e) => handleSubmit(e)}>
+				{/* <input
+					type="number"
+					placeholder="Hours"
+					value={taskDuration.hours}
+					onChange={(e) =>
+						setTaskDuration({ ...taskDuration, hours: Number(e.target.value) })
+					}
+				/> */}
+				<input
+					type="number"
+					autoFocus
+					placeholder="Minutes"
+					value={taskDuration.minutes}
+					onChange={(e) =>
+						setTaskDuration({
+							...taskDuration,
+							minutes: Number(e.target.value),
+						})
+					}
+				/>
+				<input
+					type="number"
+					placeholder="Seconds"
+					value={taskDuration.seconds}
+					onChange={(e) =>
+						setTaskDuration({
+							...taskDuration,
+							seconds: Number(e.target.value),
+						})
+					}
+				/>
+				<PurpleButton>Save</PurpleButton>
+			</form>
+		);
+	}
+
+	return (
+		<>
+			<span className="text-kinoko-purple">{timeLeftDisplay}</span>
+			<span>/</span>
+			<span>{timeTotalDisplay}</span>
+			<FiEdit
+				className="cursor-pointer"
+				onClick={() => setEditTaskDuration(true)}
+			/>
 		</>
 	);
 };
