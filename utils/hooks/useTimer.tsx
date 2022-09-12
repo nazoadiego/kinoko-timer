@@ -15,6 +15,8 @@ const useTimer = (taskDuration: number) => {
 	};
 
 	const startTimer = () => {
+		if (intervalRef.current !== undefined) return;
+
 		intervalRef.current = setInterval(coundownCallback, 1000);
 	};
 

@@ -1,29 +1,32 @@
-import { FC, useContext, useEffect, useState } from "react";
-import TimerContext from "../pages/TimerContext";
+import { FC, useEffect, useState } from "react";
 import { prettyTime } from "../utils/prettyTime";
 import useTimer from "../utils/hooks/useTimer";
 import PurpleButton from "./PurpleButton";
 
 interface TimeboxProps {
 	id: number;
-	deleteTimebox: (timeboxIndex: number) => void;
 	timeboxes: number[];
 	lastTimeboxUUID: number;
 	firstTimeboxUUID: number;
 	currentTimeboxIndex: number;
+	activeTimeboxId: number;
+	setActiveTimeboxId: Dispatch<SetStateAction<number>>;
+	setTimeboxes: Dispatch<SetStateAction<number[]>>;
+	activeTask: boolean;
 }
 
 const Timebox: FC<TimeboxProps> = (props) => {
 	const {
 		id,
-		deleteTimebox,
 		timeboxes,
+		setTimeboxes,
 		lastTimeboxUUID,
 		firstTimeboxUUID,
 		currentTimeboxIndex,
+		activeTimeboxId,
+		setActiveTimeboxId,
+		activeTask,
 	} = props;
-	const { activeTimeboxId, setActiveTimeboxId, activeTask } =
-		useContext(TimerContext);
 	const [choosenTime, setChoosenTime] = useState(5);
 
 	// ? if we change choosen time, we should adapt timeLeft as well
@@ -45,13 +48,20 @@ const Timebox: FC<TimeboxProps> = (props) => {
 
 	// TODO: This could be improved to only run when timeLeft is 0 instead of checking every second
 	useEffect(() => {
-		if (timeLeft === 0) switchToNext();
+		if (timeLeft !== 0) return;
+
+		if (timeboxes.length === 1) {
+			resetTimer();
+			startTimer();
+		} else {
+			switchToNext();
+		}
 
 		return () => {};
 	}, [timeLeft]);
 
 	useEffect(() => {
-		if (activeTimebox) startTimer();
+		if (activeTimebox && activeTask) startTimer();
 		if (activeTask === false) stopTimer();
 
 		return () => {
@@ -63,6 +73,23 @@ const Timebox: FC<TimeboxProps> = (props) => {
 
 	const timeLeftDisplay = prettyTime(timeLeft);
 	const timeTotalDisplay = prettyTime(choosenTime);
+
+	// Delete Timebox
+	const deleteTimebox = (deletedTimeboxUUID: number) => {
+		const filteredTimeboxes = timeboxes.filter((timeboxUUID) => {
+			return timeboxUUID !== deletedTimeboxUUID;
+		});
+
+		if (activeTimeboxId === deletedTimeboxUUID) {
+			switchToNext();
+		}
+
+		if (filteredTimeboxes.length === 0) {
+			setActiveTimeboxId(0);
+		}
+
+		setTimeboxes(filteredTimeboxes);
+	};
 
 	// CSS
 
@@ -129,19 +156,19 @@ const TimeboxTitle: FC = () => {
 				onKeyPress={(e) => handleSaveChanges(e, setEditTimeboxTitle)}
 			/>
 		);
-	} else {
-		return (
-			<>
-				<div className="flex items-center gap-2">
-					<h3 className="text-kinoko-purple">{timeboxTitle}</h3>
-					<FiEdit
-						className="cursor-pointer"
-						onClick={() => setEditTimeboxTitle(true)}
-					/>
-				</div>
-			</>
-		);
 	}
+
+	return (
+		<>
+			<div className="flex items-center gap-2">
+				<h3 className="text-kinoko-purple">{timeboxTitle}</h3>
+				<FiEdit
+					className="cursor-pointer"
+					onClick={() => setEditTimeboxTitle(true)}
+				/>
+			</div>
+		</>
+	);
 };
 
 export default Timebox;

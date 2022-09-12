@@ -10,7 +10,6 @@ import PurpleButton from "../components/PurpleButton";
 import Timebox from "../components/Timebox";
 import { prettyTime } from "../utils/prettyTime";
 import useTimer from "../utils/hooks/useTimer";
-import TimerContext from "../pages/TimerContext";
 import { FiEdit } from "react-icons/fi";
 import { calculateTime } from "../utils/calculateTime";
 
@@ -36,34 +35,23 @@ const Task: FC<TaskProps> = ({ playAudio }) => {
 		(timebox) => timebox === activeTimeboxId
 	);
 
-	// Delete Timebox
-	const deleteTimebox = (timeboxIndex: number) => {
-		const filteredTimeboxes = timeboxes.filter((timebox) => {
-			return timebox !== timeboxIndex;
-		});
-
-		setTimeboxes(filteredTimeboxes);
-	};
-
 	// Add Timebox
 	const addTimebox = () => {
-		setTimeboxes([...timeboxes, lastTimeboxUUID + 1]);
-	};
-
-	// Context
-
-	const value = {
-		activeTimeboxId,
-		setActiveTimeboxId,
-		activeTask,
+		if (timeboxes.length === 0) {
+			setTimeboxes([1]);
+		} else {
+			setTimeboxes([...timeboxes, lastTimeboxUUID + 1]);
+		}
 	};
 
 	// Task Timer
 
 	const startTask = () => {
-		if (activeTimeboxId === 0) setActiveTimeboxId(1);
+		if (activeTimeboxId === 0) {
+			setActiveTimeboxId(firstTimeboxUUID);
+		}
 
-		if (activeTask !== true) startTimer();
+		startTimer();
 		setActiveTask(true);
 	};
 
@@ -71,6 +59,12 @@ const Task: FC<TaskProps> = ({ playAudio }) => {
 		stopTimer();
 		setActiveTask(false);
 	};
+
+	useEffect(() => {
+		if (timeLeft === 0) setActiveTask(false);
+
+		return () => {};
+	}, [timeLeft]);
 
 	// Audio
 	useEffect(() => {
@@ -102,19 +96,20 @@ const Task: FC<TaskProps> = ({ playAudio }) => {
 			{/* Timeboxes */}
 			<div className="space-y-3">
 				<h2 className="text-white">Timeboxes</h2>
-				<TimerContext.Provider value={value}>
-					{timeboxes.map((id) => (
-						<Timebox
-							id={id}
-							key={id}
-							lastTimeboxUUID={lastTimeboxUUID}
-							firstTimeboxUUID={firstTimeboxUUID}
-							currentTimeboxIndex={currentTimeboxIndex}
-							deleteTimebox={deleteTimebox}
-							timeboxes={timeboxes}
-						/>
-					))}
-				</TimerContext.Provider>
+				{timeboxes.map((id) => (
+					<Timebox
+						id={id}
+						key={id}
+						lastTimeboxUUID={lastTimeboxUUID}
+						firstTimeboxUUID={firstTimeboxUUID}
+						currentTimeboxIndex={currentTimeboxIndex}
+						timeboxes={timeboxes}
+						setTimeboxes={setTimeboxes}
+						activeTimeboxId={activeTimeboxId}
+						setActiveTimeboxId={setActiveTimeboxId}
+						activeTask={activeTask}
+					/>
+				))}
 			</div>
 		</main>
 	);
