@@ -131,7 +131,6 @@ const TimeboxTitle: FC<TimeboxTitleProps> = () => {
 	const [timeboxTitle, setTimeboxTitle] = useState("Timebox Title");
 
 	const handleSubmit = (e: FormEvent) => {
-		const target = e.target as HTMLTextAreaElement;
 		e.preventDefault();
 		setEditTimeboxTitle(false);
 	};

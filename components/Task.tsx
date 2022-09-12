@@ -138,20 +138,20 @@ const TaskTitle: FC<TaskTitleProps> = () => {
 				/>
 			</form>
 		);
-	} else {
-		return (
-			<>
-				<h2>Task</h2>
-				<div className="flex items-center gap-2">
-					<h3 className="text-kinoko-purple">{taskTitle}</h3>
-					<FiEdit
-						className="cursor-pointer"
-						onClick={() => setEditTaskTitle(true)}
-					/>
-				</div>
-			</>
-		);
 	}
+
+	return (
+		<>
+			<h2>Task</h2>
+			<div className="flex items-center gap-2">
+				<h3 className="text-kinoko-purple">{taskTitle}</h3>
+				<FiEdit
+					className="cursor-pointer"
+					onClick={() => setEditTaskTitle(true)}
+				/>
+			</div>
+		</>
+	);
 };
 
 interface TaskDurationProps {
@@ -219,19 +219,19 @@ const TaskDuration: FC<TaskDurationProps> = (props) => {
 				<PurpleButton>Save</PurpleButton>
 			</form>
 		);
-	} else {
-		return (
-			<>
-				<span className="text-kinoko-purple">{timeLeftDisplay}</span>
-				<span>/</span>
-				<span>{timeTotalDisplay}</span>
-				<FiEdit
-					className="cursor-pointer"
-					onClick={() => setEditTaskDuration(true)}
-				/>
-			</>
-		);
 	}
+
+	return (
+		<>
+			<span className="text-kinoko-purple">{timeLeftDisplay}</span>
+			<span>/</span>
+			<span>{timeTotalDisplay}</span>
+			<FiEdit
+				className="cursor-pointer"
+				onClick={() => setEditTaskDuration(true)}
+			/>
+		</>
+	);
 };
 
 export default Task;
