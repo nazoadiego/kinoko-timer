@@ -72,30 +72,29 @@ const Task: FC<TaskProps> = ({ playAudio }) => {
 	}, [activeTimeboxId]);
 
 	return (
-		<main className="grid grid-cols-2 gap-2">
-			<div className="white-card flex flex-col items-center justify-center">
+		<>
+			<div className="white-card flex flex-col items-center justify-center py-8">
 				<TaskTitle />
 				<TaskDuration
 					timeLeft={timeLeft}
 					durationInSeconds={durationInSeconds}
 					setDurationInSeconds={setDurationInSeconds}
 				/>
-				<div className="space-y-5 flex flex-col mt-10">
+				<div className="grid grid-cols-4 mt-4 gap-2">
 					<PurpleButton clickEvent={startTask}>Start Timer</PurpleButton>
 					<PurpleButton clickEvent={stopTask}>Stop Timer</PurpleButton>
 					<PurpleButton clickEvent={resetTimer}>Reset Timer</PurpleButton>
 					<PurpleButton clickEvent={addTimebox}>Add Timebox</PurpleButton>
 				</div>
-				<div className="mt-6">
+				{/* <div className="mt-6">
 					<h5>timeboxes size: {timeboxes.length}</h5>
 					<h5>active?: {activeTask ? "Yes" : "No"}</h5>
 					<h5>activeTimeboxId?: {activeTimeboxId}</h5>
 					<h5>currentTimeboxIndex: {currentTimeboxIndex}</h5>
-				</div>
+				</div> */}
 			</div>
 			{/* Timeboxes */}
-			<div className="space-y-3">
-				<h2 className="text-white">Timeboxes</h2>
+			<div className="flex gap-4 justify-center mt-4 overflow-x-scroll">
 				{timeboxes.map((id) => (
 					<Timebox
 						id={id}
@@ -111,7 +110,7 @@ const Task: FC<TaskProps> = ({ playAudio }) => {
 					/>
 				))}
 			</div>
-		</main>
+		</>
 	);
 };
 

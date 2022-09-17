@@ -103,8 +103,8 @@ const Timebox: FC<TimeboxProps> = (props) => {
 					durationInSeconds={durationInSeconds}
 					setDurationInSeconds={setDurationInSeconds}
 				/>
-				<h5>Id: {id}</h5>
-				<h5>active? {activeTimebox ? "Yes" : "No"}</h5>
+				{/* <h5>Id: {id}</h5>
+				<h5>active? {activeTimebox ? "Yes" : "No"}</h5> */}
 				<div className="my-2 space-x-2 space-y-2">
 					<PurpleButton clickEvent={switchToNext}>Next</PurpleButton>
 					<PurpleButton clickEvent={() => setActiveTimeboxId(id)}>
@@ -152,7 +152,7 @@ const TimeboxTitle: FC<TimeboxTitleProps> = () => {
 	return (
 		<>
 			<div className="flex items-center gap-2">
-				<h3 className="text-kinoko-purple">{timeboxTitle}</h3>
+				<h3>{timeboxTitle}</h3>
 				<FiEdit
 					className="cursor-pointer"
 					onClick={() => setEditTimeboxTitle(true)}
